@@ -1,0 +1,68 @@
+{
+  "engine_result": "tesSUCCESS",
+  "engine_result_code": 0,
+  "engine_result_message": "The transaction was applied. Only final in a validated ledger.",
+  "ledger_hash": "EE8D53D0182671A73817A0F1B75EF009964600A07630E36436C90BA1120ACCBD",
+  "ledger_index": 20941628,
+  "meta": {
+    "AffectedNodes": [
+      {
+        "ModifiedNode": {
+          "FinalFields": {
+            "Account": "r9PoqRHiz7PtoA9WhBHBp5EgKmib2d1ctt",
+            "Balance": "10015000000",
+            "Flags": 0,
+            "OwnerCount": 0,
+            "Sequence": 1
+          },
+          "LedgerEntryType": "AccountRoot",
+          "LedgerIndex": "CE5319E68F9553E88964CDAF907BC76E8C42A663F5448FB1E94712E825E92B67",
+          "PreviousFields": {
+            "Balance": "10010000000"
+          },
+          "PreviousTxnID": "38E6F11E7A78E96EF982CE6D08CEEAA832479E186B242D24CE2DDB92FA7C01E4",
+          "PreviousTxnLgrSeq": 20941626
+        }
+      },
+      {
+        "ModifiedNode": {
+          "FinalFields": {
+            "Account": "r3R5pvP3dX33P5PGDqwfsXJsNgpcjy7yaj",
+            "Balance": "9984999964",
+            "Flags": 0,
+            "OwnerCount": 0,
+            "Sequence": 4
+          },
+          "LedgerEntryType": "AccountRoot",
+          "LedgerIndex": "F57B41C645C193752CF3B699DF56BACB19BB22C4B1FD7B9CFE0B992A2CA1F97B",
+          "PreviousFields": {
+            "Balance": "9989999976",
+            "Sequence": 3
+          },
+          "PreviousTxnID": "38E6F11E7A78E96EF982CE6D08CEEAA832479E186B242D24CE2DDB92FA7C01E4",
+          "PreviousTxnLgrSeq": 20941626
+        }
+      }
+    ],
+    "TransactionIndex": 0,
+    "TransactionResult": "tesSUCCESS",
+    "delivered_amount": "5000000"
+  },
+  "status": "closed",
+  "transaction": {
+    "Account": "r3R5pvP3dX33P5PGDqwfsXJsNgpcjy7yaj",
+    "Amount": "5000000",
+    "Destination": "r9PoqRHiz7PtoA9WhBHBp5EgKmib2d1ctt",
+    "Fee": "12",
+    "Flags": 2147483648,
+    "LastLedgerSequence": 20941629,
+    "Sequence": 3,
+    "SigningPubKey": "0232B7BB87071D5F9C6E6239943F36B31A12668B4CB4721445B512CC49BFBB4EAB",
+    "TransactionType": "Payment",
+    "TxnSignature": "3044022007DB7809C970A3BCACBC7794167B7545126736E772B54938D0377EF4B0275250022001B644E800DBA120842E8A53ED4BAB1CF6DD91454209705EE85F30BE6B756CFD",
+    "date": 616233411,
+    "hash": "3A7AA4FA3ACB076D0B1C71F2EC7650F0AF2BB51804EC6AB943B2E87A097593C2"
+  },
+  "type": "transaction",
+  "validated": true
+}

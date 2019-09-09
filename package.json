@@ -1,0 +1,68 @@
+{
+  "name": "xrp-repl",
+  "version": "0.0.1",
+  "description": "Command line interface for the XRP Ledger",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "babel src --extensions '.ts' --ignore '**/*.spec.ts' --out-dir dist",
+    "start": "npm run build && node dist/index.js",
+    "clean": "rm -r dist || true",
+    "check-types": "tsc",
+    "test": "npm run lint && npm run clean && npm run build && npm run check-types && mocha",
+    "unit": "npm run build && mocha",
+    "coverage": "npm run build && nyc mocha",
+    "lint": "eslint ./ --ext .js,.ts"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "lcov",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@babel/runtime": "^7.6.0",
+    "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "five-bells-condition": "^5.0.1",
+    "ora": "^3.4.0",
+    "ripple-lib": "1.2.4",
+    "source-map-support": "^0.5.12"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.6.0",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "@types/sinon": "^7.0.12",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.19.0",
+    "nyc": "^14.1.1",
+    "sinon": "^7.3.2",
+    "ts-node": "^8.2.0",
+    "typescript": "^3.4.5"
+  }
+}
