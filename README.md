@@ -9,7 +9,7 @@ It is similar to a command line interface.
 - [Node v10 or higher](https://nodejs.org/en/download/)
 - [yarn](https://yarnpkg.com/en/)
 - An XRP Ledger account with XRP
-    For development, you can use the XRP Test Net and get some test XRP from the [XRP Test Net Faucet](https://developers.ripple.com/xrp-test-net-faucet.html).
+    - For development, you can use the XRP Test Net and get some test XRP from the [XRP Test Net Faucet](https://developers.ripple.com/xrp-test-net-faucet.html).
 
 ### Initial setup
 
@@ -29,4 +29,4 @@ To start the server in development mode:
 
         yarn dev
 
-This uses `nodemon` to automatically rebuild and restart the REPL when you save changes to the `.ts` source files. See `nodemon.json` for this project's nodemon configuration.
+This uses `nodemon` to automatically rebuild and restart the REPL when you save changes to the `.ts` source files. See [`nodemon.json`](./nodemon.json) for this project's nodemon configuration.
