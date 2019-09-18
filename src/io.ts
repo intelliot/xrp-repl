@@ -20,11 +20,16 @@ type CompleterResult = [string[], string];
 function completer(line: string, callback: (err?: null | Error, result?: CompleterResult) => void): any {
   const completions = Object.keys(io.commands);
   const hits = completions.reduce((accumulator: string[], currentValue: string) => {
-    if(currentValue.toLowerCase().startsWith(line.toLowerCase())) {
+    if (currentValue.startsWith(line)) {
       if (currentValue.startsWith('.') === false) {
         currentValue += ' '; // Add space after GET, POST, etc.
       }
       accumulator.push(currentValue);
+    } else if (currentValue.toLowerCase().startsWith(line)) {
+      if (currentValue.startsWith('.') === false) {
+        currentValue += ' '; // Add space after get, post, etc.
+      }
+      accumulator.push(currentValue.toLowerCase());
     }
     return accumulator;
   }, []);

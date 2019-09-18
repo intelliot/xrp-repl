@@ -6,6 +6,8 @@ const debug = debuglog('on');
 import axios from 'axios';
 import chalk from 'chalk';
 import ora from 'ora';
+import jsonic from 'jsonic';
+import {argv} from 'yargs';
 
 // 1st party
 // import { RippleAPI } from 'ripple-lib';
@@ -13,6 +15,19 @@ import ora from 'ora';
 
 // Internal
 import {terminal, Commands} from './io';
+
+if (!argv['authorization']) {
+  console.warn('[WARNING] authorization not specified.');
+} else {
+  axios.defaults.headers.common['Authorization'] = argv['authorization'];
+}
+
+if (!argv['base-url']) {
+  console.warn('[WARNING] base-url not specified.');
+  console.warn('          Defaulting to: --base-url=http://localhost:3000/v1');
+}
+
+const baseUrl = argv['base-url'] || 'http://localhost:3000/v1';
 
 if (!process.env.npm_package_name) {
   console.error('[ERROR] Use: npm start');
@@ -42,18 +57,19 @@ const exit = () => {
     process.exit(0);
 }
 
-type HttpRequestMethod = (url: string) => Promise<string>;
+type HttpRequestMethod = (url: string, bodyString: string) => Promise<string>;
 
 const httpRequest = (method: 'GET' | 'POST'): HttpRequestMethod => {
-  return async (url: string): Promise<string> => {
+  return async (url: string, bodyString: string): Promise<string> => {
     try {
       if (!url) {
         return chalk.red.bold(`Usage: ${method} <url>`);
       }
       const res = await axios({
         method,
-        url
-        // data
+        headers: {'Content-Type': 'application/json'},
+        url: baseUrl + url,
+        data: jsonic(bodyString)
       });
       const style = res.status >= 200 && res.status <= 399 ? chalk.green : chalk.red;
       let ret = style.bold(`${res.status} ${res.statusText}`) + '\n';
@@ -61,8 +77,31 @@ const httpRequest = (method: 'GET' | 'POST'): HttpRequestMethod => {
       // res.path
       ret += JSON.stringify(res.data, null, 2);
       return ret;
-    } catch (e) {
-      return e.toString();
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        // console.log(error.response.data);
+        // console.log(error.response.status);
+        // console.log(error.response.headers);
+        let response = chalk.red(error.response.status);
+        if (error.response.data.errors.length === 1) {
+          return response + ' ' + JSON.stringify(error.response.data.errors[0], null, 2);
+        } else {
+          return response + ' ' + JSON.stringify(error.response.data.errors, null, 2);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        // console.log(error.request);
+        return error.request;
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        // console.log('Error', error.message);
+        return error.message;
+      }
+      // console.log(error.config);
     }
   }
 }
@@ -83,7 +122,9 @@ t.onRead = async (input: string) => {
   const command = parts[0];
   if (isValidCommand(command)) {
     const spinner = ora('Loading').start();
-    const result = await (commands[command][0] as Function)(parts[1]);
+    const cmdArray = commands[command] || commands[command.toUpperCase()];
+    const method = cmdArray[0];
+    const result = await (method as Function)(parts[1], parts.splice(2).join(' '));
     spinner.stop();
     console.log(result);
   } else {
@@ -93,10 +134,20 @@ t.onRead = async (input: string) => {
 t.commands = commands;
 
 function isValidCommand(command: string | number): command is keyof typeof commands {
-  return command in commands;
+  if (typeof command === 'string') {
+    for (const element in commands) {
+      if (command.trim().toLowerCase() === element.trim().toLowerCase()) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 // Keeps service running after an exception
 process.on('uncaughtException', function (err) {
   console.error('uncaughtException:', err);
 });
+
+// Logging for errors within promises
+process.on('unhandledRejection', console.log);

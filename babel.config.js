@@ -5,15 +5,23 @@ module.exports = function(api) {
   api.cache(true);
 
   const config = {
+    // https://babeljs.io/docs/en/options#sourcemaps
+    "sourceMaps": true,
+    
     "presets": [
       // required to transform `import` to something node understands
       "@babel/preset-env",
+
+      // includes @babel/plugin-transform-typescript
+      // https://babeljs.io/docs/en/babel-plugin-transform-typescript
+      // 
       "@babel/typescript"
     ],
     "plugins": [
       "@babel/proposal-class-properties",
       "@babel/proposal-object-rest-spread",
-      "@babel/transform-runtime"
+      "@babel/transform-runtime",
+      "source-map-support"
     ]
   };
 
