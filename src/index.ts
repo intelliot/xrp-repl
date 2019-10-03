@@ -85,7 +85,7 @@ const httpRequest = (method: 'GET' | 'POST'): HttpRequestMethod => {
         // console.log(error.response.status);
         // console.log(error.response.headers);
         let response = chalk.red(error.response.status);
-        if (error.response.data.errors.length === 1) {
+        if (error.response.data.errors && error.response.data.errors.length === 1) {
           return response + ' ' + JSON.stringify(error.response.data.errors[0], null, 2);
         } else {
           return response + ' ' + JSON.stringify(error.response.data.errors, null, 2);
@@ -118,7 +118,7 @@ const commands: Commands = {
 
 const t = terminal();
 t.onRead = async (input: string) => {
-  const parts = input.split(' ');
+  const parts = input.match(/\S+/g) || []; // Match non-whitespace
   const command = parts[0];
   if (isValidCommand(command)) {
     const spinner = ora('Loading').start();
@@ -128,7 +128,7 @@ t.onRead = async (input: string) => {
     spinner.stop();
     console.log(result);
   } else {
-    console.log(`Invalid REPL keyword`);
+    console.log(`Invalid REPL keyword: ${command}`);
   }
 };
 t.commands = commands;
