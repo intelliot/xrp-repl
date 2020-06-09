@@ -34,6 +34,12 @@ if (!argv['base-url']) {
 const baseUrl = argv['base-url'] || 'http://localhost:3000/v1';
 
 if (!process.env.npm_package_name) {
+  const packageJson = require('../package.json')
+  process.env.npm_package_name = packageJson.name;
+  process.env.npm_package_version = packageJson.version;
+}
+
+if (!process.env.npm_package_name) {
   console.error('[ERROR] Use: npm start');
   console.error('         or: yarn start');
   process.exit(1);
