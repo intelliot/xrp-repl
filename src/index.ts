@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Node.js
 import { debuglog } from 'util';
 const debug = debuglog('on');
@@ -7,24 +9,26 @@ import axios from 'axios';
 import chalk from 'chalk';
 import ora from 'ora';
 import jsonic from 'jsonic';
+import JSON5 from 'json5';
 import {argv} from 'yargs';
 
 // 1st party
 // import { RippleAPI } from 'ripple-lib';
 // import * as cc from 'five-bells-condition';
+import rippleBinaryCodec from 'ripple-binary-codec';
 
 // Internal
 import {terminal, Commands} from './io';
 
 if (!argv['authorization']) {
-  console.warn('[WARNING] authorization not specified.');
+  console.log('- `authorization` not specified.');
 } else {
   axios.defaults.headers.common['Authorization'] = argv['authorization'];
 }
 
 if (!argv['base-url']) {
-  console.warn('[WARNING] base-url not specified.');
-  console.warn('          Defaulting to: --base-url=http://localhost:3000/v1');
+  console.log('- `base-url` not specified.');
+  // console.log('          Defaulting to: --base-url=http://localhost:3000/v1');
 }
 
 const baseUrl = argv['base-url'] || 'http://localhost:3000/v1';
@@ -113,13 +117,63 @@ const commands: Commands = {
   POST:    [httpRequest('POST'), 'Perform an HTTP POST request'],
   // P: [httpRequest('POST')], // alias
   GET:     [httpRequest('GET'), 'Perform an HTTP GET request'],
-  // G: [httpRequest('GET')] // alias
+  // G: [httpRequest('GET')], // alias
+  encode:  [rippleBinaryCodec.encode, 'Encode an object using ripple-binary-codec'],
+  decode:  [rippleBinaryCodec.decode, 'Decode binary (hexadecimal) using ripple-binary-codec'],
+}
+
+let pendingCommand = '';
+let readBuffer = '';
+let numberOfClosingBracesRemaining = 0;
+
+function handleMultilineCommand({input}: {input: string}) {
+  readBuffer += input;
+
+  const opening = (input.match(/{/g) || []).length;
+  const closing = (input.match(/}/g) || []).length;
+  numberOfClosingBracesRemaining = numberOfClosingBracesRemaining + opening - closing;
+
+  if (numberOfClosingBracesRemaining === 0) {
+    if (readBuffer.trim() === '') {
+      console.log(`Ready for input`);
+    } else {
+      // Execute command
+      let param: string | object;
+      if (pendingCommand === 'encode') {
+        param = JSON5.parse(readBuffer);
+      } else {
+        param = readBuffer;
+      }
+      const method = commands[pendingCommand][0];
+      const result = (method as Function)(param);
+      console.log(result);
+
+      pendingCommand = '';
+      numberOfClosingBracesRemaining = 0;
+      readBuffer = '';
+    }
+  } else if (numberOfClosingBracesRemaining < 0) {
+    console.log(`Invalid: Too many closing braces`);
+  }
 }
 
 const t = terminal();
 t.onRead = async (input: string) => {
+  if (pendingCommand) {
+    handleMultilineCommand({input});
+    return;
+  }
+
   const parts = input.match(/\S+/g) || []; // Match non-whitespace
   const command = parts[0];
+
+  // Special case multi-line commands
+  if (command === 'encode' || command === 'decode') {
+    pendingCommand = command;
+    handleMultilineCommand({input: parts.slice(1).join(' ')});
+    return;
+  }
+
   if (isValidCommand(command)) {
     const spinner = ora('Loading').start();
     const cmdArray = commands[command] || commands[command.toUpperCase()];
@@ -132,6 +186,12 @@ t.onRead = async (input: string) => {
   }
 };
 t.commands = commands;
+
+t.onInterrupt = () => {
+  pendingCommand = '';
+  numberOfClosingBracesRemaining = 0;
+  readBuffer = '';
+}
 
 function isValidCommand(command: string | number): command is keyof typeof commands {
   if (typeof command === 'string') {

@@ -41,9 +41,11 @@ function completer(line: string, callback: (err?: null | Error, result?: Complet
 
 const io: {
   onRead: Function,
+  onInterrupt: Function,
   commands: Commands
 } = {
   onRead: (_: string) => {},
+  onInterrupt: () => {},
   commands: {
     COMMAND: [() => {}, 'Description']
   }
@@ -79,6 +81,8 @@ rl.on('SIGINT', () => {
 
   // Simulate Ctrl+u to delete the text written after the cursor
   rl.write('', { ctrl: true, name: 'k' });
+
+  io.onInterrupt();
 });
 
 export function terminal() {
