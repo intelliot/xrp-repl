@@ -34,7 +34,7 @@ if (!argv['base-url']) {
 const baseUrl = argv['base-url'] || 'http://localhost:3000/v1';
 
 if (!process.env.npm_package_name) {
-  const packageJson = require('../package.json')
+  const packageJson = require('../package.json');
   process.env.npm_package_name = packageJson.name;
   process.env.npm_package_version = packageJson.version;
 }
@@ -51,21 +51,21 @@ console.log();
 console.log(`Type ".help" for more information.`);
 
 const help = (): string => {
-    let help = '';
-    for (let command in commands) {
-      if (commands[command].length >= 2) {
-        help += `${command.padEnd(10)} ${commands[command][1]}\n`;
-      }
+  let help = '';
+  for (const command in commands) {
+    if (commands[command].length >= 2) {
+      help += `${command.padEnd(10)} ${commands[command][1]}\n`;
     }
+  }
 
-    help += '\n';
-    help += `Press ^C to abort current expression, ^D to exit the repl`;
-    return help;
-}
+  help += '\n';
+  help += `Press ^C to abort current expression, ^D to exit the repl`;
+  return help;
+};
 
 const exit = () => {
-    process.exit(0);
-}
+  process.exit(0);
+};
 
 type HttpRequestMethod = (url: string, bodyString: string) => Promise<string>;
 
@@ -94,7 +94,7 @@ const httpRequest = (method: 'GET' | 'POST'): HttpRequestMethod => {
         // console.log(error.response.data);
         // console.log(error.response.status);
         // console.log(error.response.headers);
-        let response = chalk.red(error.response.status);
+        const response = chalk.red(error.response.status);
         if (error.response.data.errors && error.response.data.errors.length === 1) {
           return response + ' ' + JSON.stringify(error.response.data.errors[0], null, 2);
         } else {
@@ -113,8 +113,8 @@ const httpRequest = (method: 'GET' | 'POST'): HttpRequestMethod => {
       }
       // console.log(error.config);
     }
-  }
-}
+  };
+};
 
 // Case insensitive
 const commands: Commands = {
@@ -126,7 +126,7 @@ const commands: Commands = {
   // G: [httpRequest('GET')], // alias
   encode:  [rippleBinaryCodec.encode, 'Encode an object using ripple-binary-codec'],
   decode:  [rippleBinaryCodec.decode, 'Decode binary (hexadecimal) using ripple-binary-codec'],
-}
+};
 
 let pendingCommand = '';
 let readBuffer = '';
@@ -197,7 +197,7 @@ t.onInterrupt = () => {
   pendingCommand = '';
   numberOfClosingBracesRemaining = 0;
   readBuffer = '';
-}
+};
 
 function isValidCommand(command: string | number): command is keyof typeof commands {
   if (typeof command === 'string') {

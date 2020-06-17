@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 });
 
 export interface Commands {
-  [index: string]: (Function | string)[]
+  [index: string]: (Function | string)[];
 }
 
 // Via @types/node:
@@ -40,16 +40,16 @@ function completer(line: string, callback: (err?: null | Error, result?: Complet
 //   and circle back around at the end.
 
 const io: {
-  onRead: Function,
-  onInterrupt: Function,
-  commands: Commands
+  onRead: Function;
+  onInterrupt: Function;
+  commands: Commands;
 } = {
   onRead: (_: string) => {},
   onInterrupt: () => {},
   commands: {
     COMMAND: [() => {}, 'Description']
   }
-}
+};
 
 rl.on('line', async (input: string) => {
   did_sigint = false;
@@ -57,7 +57,7 @@ rl.on('line', async (input: string) => {
   rl.prompt();
 });
 
-readline.emitKeypressEvents(process.stdin)
+readline.emitKeypressEvents(process.stdin);
 process.stdin.on('keypress', (str: string, key: {ctrl: boolean}) => {
   // ctrl+c =
   //   {"sequence":"\u0003","name":"c","ctrl":true,"meta":false,"shift":false}
