@@ -9,12 +9,9 @@ import ora from 'ora';
 import jsonic from 'jsonic';
 import {argv} from 'yargs';
 
-// 1st party
-// import { RippleAPI } from 'ripple-lib';
-// import * as cc from 'five-bells-condition';
-
 // Internal
 import {terminal, Commands} from './io';
+import {classicAddressToXAddress, sign, prepareTransaction} from './ripple-lib-commands';
 
 if (!argv['authorization']) {
   console.warn('[WARNING] authorization not specified.');
@@ -113,7 +110,10 @@ const commands: Commands = {
   POST:    [httpRequest('POST'), 'Perform an HTTP POST request'],
   // P: [httpRequest('POST')], // alias
   GET:     [httpRequest('GET'), 'Perform an HTTP GET request'],
-  // G: [httpRequest('GET')] // alias
+  // G: [httpRequest('GET')] // alias,
+  classicAddressToXAddress: [classicAddressToXAddress, 'Convert a classic address to an X-address'],
+  sign: [sign, 'Sign <"secret"|"keypair"> {<object to sign>}'],
+  prepareTransaction: [prepareTransaction, 'PrepareTransaction {<transaction object>}']
 }
 
 const t = terminal();
@@ -124,11 +124,18 @@ t.onRead = async (input: string) => {
     const spinner = ora('Loading').start();
     const cmdArray = commands[command] || commands[command.toUpperCase()];
     const method = cmdArray[0];
-    const result = await (method as Function)(parts[1], parts.splice(2).join(' '));
+    let result;
+    try {
+      result = await (method as Function)(parts[1], parts.splice(2).join(' '));
+    } catch (e) {
+      console.log('Error: ' + e);
+    }
     spinner.stop();
     console.log(result);
   } else {
-    console.log(`Invalid REPL keyword: ${command}`);
+    if (command) {
+      console.log(`Invalid REPL keyword: ${command}`);
+    }
   }
 };
 t.commands = commands;
