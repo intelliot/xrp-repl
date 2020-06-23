@@ -1,6 +1,6 @@
 {
   "name": "xrp-repl",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "bin": {
     "xrp-repl": "./dist/index.js",
     "xrp": "./dist/index.js"
@@ -54,6 +54,7 @@
     "jsonic": "^0.3.1",
     "ora": "^3.4.0",
     "ripple-binary-codec": "^0.2.6",
+    "ripple-keypairs": "^1.0.1",
     "ripple-lib": "1.2.4",
     "source-map-support": "^0.5.13",
     "yargs": "^14.0.0"

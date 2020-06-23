@@ -16,6 +16,7 @@ import {argv} from 'yargs';
 // import { RippleAPI } from 'ripple-lib';
 // import * as cc from 'five-bells-condition';
 import rippleBinaryCodec from 'ripple-binary-codec';
+import rippleKeypairs from 'ripple-keypairs';
 
 // Internal
 import {terminal, Commands} from './io';
@@ -126,6 +127,7 @@ const commands: Commands = {
   // G: [httpRequest('GET')], // alias
   encode:  [rippleBinaryCodec.encode, 'Encode an object using ripple-binary-codec'],
   decode:  [rippleBinaryCodec.decode, 'Decode binary (hexadecimal) using ripple-binary-codec'],
+  deriveAddress: [rippleKeypairs.deriveAddress, 'Derive an XRP Ledger classic address from a hex-encoded public key'],
 };
 
 let pendingCommand = '';
